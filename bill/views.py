@@ -521,8 +521,9 @@ def invoice_delete(request,pk):
 def invoice_print(request,pk):
     profile = Profile.objects.get(user=request.user)
     invoice=Invoice.objects.get(id=pk)
+    bill_of = ["Original for Buyer", "Duplicate for Transporter", "Triplicate for Assessee"]
     x=range(1,19)
-    return render(request, 'invoice_print.html', {'invoice':invoice, 'profile':profile, 'x':x})
+    return render(request, 'invoice_print.html', {'invoice':invoice, 'profile':profile, 'x':x, 'bill_of':bill_of})
 
 @login_required(login_url="/login_page/")
 def invoice_billbook(request):
