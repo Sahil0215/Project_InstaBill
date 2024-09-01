@@ -1,0 +1,12 @@
+﻿asgiref==3.8.1
+Django==5.1
+django-extensions==3.2.3
+djangorestframework==3.15.2
+docopt==0.6.2
+num2words==0.5.13
+psycopg==3.2.1
+psycopg2-binary==2.9.9
+sqlparse==0.5.1
+typing_extensions==4.12.2
+tzdata==2024.1
+whitenoise==6.7.0
