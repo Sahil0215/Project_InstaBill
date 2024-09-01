@@ -41,17 +41,6 @@ class Customer(models.Model):
     email = models.EmailField(blank=True, null=True)
     bal = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
 
-class Supplier(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    name = models.CharField(max_length=255)
-    gst = models.CharField(max_length=20, blank=True, null=True)
-    adrs = models.TextField()
-    city = models.CharField(max_length=100)
-    state = models.CharField(max_length=100)
-    phone = models.CharField(max_length=15)
-    email = models.EmailField(blank=True, null=True)
-    bal = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
-
    
 class Item(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -98,3 +87,19 @@ class Invoice(models.Model):
     grand_total=models.DecimalField(max_digits=10, decimal_places=2)
     grand_total_words=models.CharField(max_length=150, null=True)
 
+
+class InvoicePurchase(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    invoice_to=models.ForeignKey(Customer , on_delete=models.CASCADE , blank=True, null=True, related_name='billtopurchase')
+    date=models.DateField(blank=True, null=True)
+    no_of_items=models.PositiveIntegerField(default=0)
+    invoice_items=models.ManyToManyField(BilledItem)
+    taxable_before=models.DecimalField(max_digits=10, decimal_places=2)
+    other_charges=models.DecimalField(max_digits=10, decimal_places=2)
+    discount=models.DecimalField(max_digits=10, decimal_places=2)
+    taxable_after=models.DecimalField(max_digits=10, decimal_places=2)
+    sgst_amt=models.DecimalField(max_digits=10, decimal_places=2)
+    igst_amt=models.DecimalField(max_digits=10, decimal_places=2)
+    cgst_amt=models.DecimalField(max_digits=10, decimal_places=2)
+    tgst_amt=models.DecimalField(max_digits=10, decimal_places=2)
+    grand_total=models.DecimalField(max_digits=10, decimal_places=2)

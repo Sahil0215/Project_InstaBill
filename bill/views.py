@@ -236,76 +236,6 @@ def customer_delete(request,pk):
     return redirect('customer_read')
 
 @login_required(login_url="/login_page/")
-def supplier_create(request):
-    if request.method=="POST":
-        name= request.POST.get('name').upper()
-        gst= request.POST.get('gst').upper()
-        adrs= request.POST.get('adrs')
-        city= request.POST.get('city')
-        state= request.POST.get('state').upper()
-        phone= request.POST.get('phone')
-        email= request.POST.get('email')
-
-        supplier=Supplier(
-            user=request.user,
-            name=name,
-            gst=gst,
-            adrs=adrs,
-            city=city,
-            state=state,
-            phone=phone,
-            email=email,
-            bal=Decimal(0.00)
-        )
-        supplier.save()
-        return redirect('supplier_read')
-    
-    return render(request, 'supplier_create.html')
-
-@login_required(login_url="/login_page/")
-def supplier_read(request):
-    supplier=Supplier.objects.filter(user=request.user)
-    if not supplier.exists():
-        messages.info(request, 'No supplier Found')
-    return render(request, 'supplier_read.html', {"supplier":supplier})
-
-@login_required(login_url="/login_page/")
-def supplier_update(request,pk):
-    supplier = Supplier.objects.get(id=pk)
-
-    if request.method=="POST":
-        name= request.POST.get('name').upper()
-        gst= request.POST.get('gst').upper()
-        adrs= request.POST.get('adrs')
-        city= request.POST.get('city')
-        state= request.POST.get('state').upper()
-        phone= request.POST.get('phone')
-        email= request.POST.get('email')
-
-        if not all([name,gst,adrs,city,state,phone]):
-            messages.error(request, 'All fields are required.')
-        else:
-            supplier.name=name
-            supplier.gst=gst
-            supplier.adrs=adrs
-            supplier.city=city
-            supplier.state=state
-            supplier.phone=phone
-            supplier.email=email
-            supplier.save()
-            return redirect('supplier_read')
-        
-    return render(request, 'supplier_update.html', {'supplier':supplier})
-
-
-@login_required(login_url="/login_page/")
-def supplier_delete(request,pk):
-    supplier=Supplier.objects.filter(id=pk)
-    supplier.delete()
-    return redirect('supplier_read')
-
-
-@login_required(login_url="/login_page/")
 def item_create(request):
     if request.method == 'POST':
         name = request.POST.get('name').upper()
@@ -507,14 +437,26 @@ def invoice_read(request):
         return render(request, "invoice_read.html")
     return render(request, "invoice_read.html", {'invoices':invoices})
 
-
 @login_required(login_url="/login_page/")
-def invoice_delete(request,pk):
+def invoice_delete(request, pk):
     profile = Profile.objects.get(user=request.user)
-    profile.bill_count-=1
-    profile.save()
-    invoice=Invoice.objects.get(id=pk)
+    
+    if profile.bill_count > 0:
+        profile.bill_count -= 1
+        profile.save()
+    
+    invoice = Invoice.objects.get(user=request.user)
+    if invoice.invoice_to:
+        invoice.invoice_to.bal += invoice.grand_total
+        invoice.invoice_to.save()
+    
+    for item in invoice.invoice_items.all():
+        item_details = item.item_details
+        item_details.bal += item.quantity
+        item_details.save()
+    
     invoice.delete()
+
     return redirect('invoice_read')
 
 @login_required(login_url="/login_page/")
@@ -590,3 +532,164 @@ def bank_delete(request,pk):
     bank=Bank.objects.filter(id=pk)
     bank.delete()
     return redirect('bank_read')
+
+
+@login_required(login_url="/login_page/")
+def invoicepurchase_create(request):
+    if request.method == "POST":
+        invoice_to_id = request.POST.get('invoice_to')
+        invoice_to = Customer.objects.get(id=invoice_to_id)
+        date = request.POST.get('date')
+        no_of_items = int(request.POST.get('no_of_items'))
+        other_charges = Decimal(request.POST.get('other_charges'))
+        discount = Decimal(request.POST.get('discount'))
+        profile=Profile.objects.get(user=request.user)
+
+        taxable_before = Decimal(0.00)
+
+        invoice_items_arr = []
+        for i in range(1, no_of_items + 1):
+            item_details_id = request.POST.get('item' + str(i))
+            item_details = Item.objects.get(id=item_details_id)
+            quantity = Decimal(request.POST.get('quantity' + str(i)))
+            rate = Decimal(request.POST.get('rate' + str(i)))
+            unit = request.POST.get('unit' + str(i))
+            dis = Decimal(request.POST.get('dis' + str(i)))
+
+            if profile.state==invoice_to.state:
+                sgst = item_details.tax/Decimal(2)
+                cgst = item_details.tax/Decimal(2)
+                igst = Decimal(0.00)
+            else:
+                sgst = Decimal(0.00)
+                cgst = Decimal(0.00)
+                igst = Decimal(item_details.tax)
+                
+            amount=rate*quantity
+            taxval = amount-dis
+            taxable_before += taxval
+
+            billedItem_object = BilledItem(
+                item_details= item_details,
+                rate= rate,
+                quantity= quantity,
+                unit= unit,
+                dis= dis,
+                igst= igst,
+                sgst= sgst,
+                cgst= cgst,
+                amount= amount,
+                taxval= taxval,
+                igst_amt= Decimal(0.00),
+                sgst_amt= Decimal(0.00),
+                cgst_amt= Decimal(0.00),
+            )
+
+            item_details.bal+=quantity
+            item_details.save()
+
+            billedItem_object.save()
+            invoice_items_arr.append(billedItem_object)
+ 
+        date_obj = datetime.strptime(date, '%Y-%m-%d')
+        taxable_after = taxable_before - discount + other_charges 
+        tgst = Decimal(0.00)
+        sgst_amt_f = Decimal(0.00)
+        cgst_amt_f = Decimal(0.00)
+        igst_amt_f = Decimal(0.00)
+        for item in invoice_items_arr:
+            sgst_amt = (item.taxval/taxable_before)*taxable_after*(item.sgst/100) 
+            cgst_amt = (item.taxval/taxable_before)*taxable_after*(item.cgst/100) 
+            igst_amt = (item.taxval/taxable_before)*taxable_after*(item.igst/100) 
+            
+            item.sgst_amt=sgst_amt
+            item.cgst_amt=cgst_amt
+            item.igst_amt=igst_amt
+
+            sgst_amt_f += sgst_amt 
+            cgst_amt_f += cgst_amt
+            igst_amt_f += igst_amt
+            item.save()
+
+            tgst += sgst_amt+cgst_amt+igst_amt
+
+        grand_total = taxable_after + tgst
+
+
+        invoice_obj = InvoicePurchase(
+            user=request.user,
+            invoice_to=invoice_to,
+            date=date_obj,
+            no_of_items=no_of_items,
+            taxable_before=taxable_before,
+            other_charges=other_charges,
+            discount=discount,
+            taxable_after=taxable_after,
+            sgst_amt=sgst_amt_f,
+            igst_amt=igst_amt_f,
+            cgst_amt=cgst_amt_f,
+            tgst_amt=tgst,
+            grand_total=grand_total
+        )
+
+        invoice_to.bal+=grand_total
+        invoice_to.save()
+
+        invoice_obj.save()
+        invoice_obj.invoice_items.set(invoice_items_arr)
+
+        profile.save()
+        
+        return redirect("invoicepurchase_read")
+    else:
+        customer = Customer.objects.filter(user=request.user)
+        item = Item.objects.filter(user=request.user)
+        profile = Profile.objects.get(user=request.user)
+        return render(request, 'invoicepurchase_create.html', {'customer': customer, 'items': item, 'profile':profile})
+
+
+
+@login_required(login_url="/login_page/")
+def invoicepurchase_update(request,pk):
+    return HttpResponse("<h1>!!!Work In Progress!!!<h1>")
+
+@login_required(login_url="/login_page/")
+def invoicepurchase_read(request):
+    invoices=InvoicePurchase.objects.filter(user=request.user).order_by('-id')
+    if len(invoices)==0:
+        messages.info(request, 'No invoice Found')
+        return render(request, "invoicepurchase_read.html")
+    return render(request, "invoicepurchase_read.html", {'invoices':invoices})
+
+
+
+@login_required(login_url="/login_page/")
+def invoicepurchase_delete(request, pk):
+    invoice = InvoicePurchase.objects.get(user=request.user)
+    if invoice.invoice_to:
+        invoice.invoice_to.bal -= invoice.grand_total
+        invoice.invoice_to.save()
+    
+    for item in invoice.invoice_items.all():
+        item_details = item.item_details
+        item_details.bal -= item.quantity
+        item_details.save()
+    
+    invoice.delete()
+
+    return redirect('invoicepurchase_read')
+
+@login_required(login_url="/login_page/")
+def invoicepurchase_print(request,pk):
+    profile = Profile.objects.get(user=request.user)
+    invoice=InvoicePurchase.objects.get(id=pk)
+    bill_of = ["Original for Buyer", "Duplicate for Transporter", "Triplicate for Assessee"]
+    x=range(1,19)
+    return render(request, 'invoicepurchase_print.html', {'invoice':invoice, 'profile':profile, 'x':x, 'bill_of':bill_of})
+
+@login_required(login_url="/login_page/")
+def invoicepurchase_billbook(request):
+    invoice = InvoicePurchase.objects.filter(user=request.user).order_by('invoice_no')
+    profile = Profile.objects.get(user=request.user)
+    x=range(1,20)
+    return render(request, 'invoicepurchase_billbook.html', {"invoices":invoice, "profile":profile, 'x':x})

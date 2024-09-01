@@ -22,11 +22,6 @@ urlpatterns = [
     path('customer_update/<int:pk>/', customer_update, name='customer_update'),
     path('customer_delete/<int:pk>/', customer_delete, name='customer_delete'),
     
-    path('supplier_create/', supplier_create, name='supplier_create'),
-    path('supplier_read/', supplier_read, name='supplier_read'),
-    path('supplier_update/<int:pk>/', supplier_update, name='supplier_update'),
-    path('supplier_delete/<int:pk>/', supplier_delete, name='supplier_delete'),
-    
     path('item_create/', item_create, name='item_create'),
     path('item_read/', item_read, name='item_read'),
     path('item_update/<int:pk>/', item_update, name='item_update'),
@@ -38,6 +33,14 @@ urlpatterns = [
     path('invoice_print/<int:pk>/', invoice_print, name='invoice_print'),
     path('invoice_update/<int:pk>/', invoice_update, name='invoice_update'),
     path('invoice_delete/<int:pk>/', invoice_delete, name='invoice_delete'),
+
+ 
+    path('invoicepurchase_create/', invoicepurchase_create, name='invoicepurchase_create'),
+    path('invoicepurchase_read/', invoicepurchase_read, name='invoicepurchase_read'),
+    path('invoicepurchase_billbook/', invoicepurchase_billbook, name='invoicepurchase_billbook'),
+    path('invoicepurchase_print/<int:pk>/', invoicepurchase_print, name='invoicepurchase_print'),
+    path('invoicepurchase_update/<int:pk>/', invoicepurchase_update, name='invoicepurchase_update'),
+    path('invoicepurchase_delete/<int:pk>/', invoicepurchase_delete, name='invoicepurchase_delete'),
 
     path('bank_create/', bank_create, name='bank_create'),
     path('bank_read/', bank_read, name='bank_read'),

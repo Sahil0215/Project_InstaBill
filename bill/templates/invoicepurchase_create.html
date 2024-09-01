@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Invoice | InstaBill</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+        crossorigin="anonymous"></script>
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 400;
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="{% url 'home' %}">InstaBill</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="{% url 'home' %}">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'view_profile' %}">My Account</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'logout_page' %}">Logout</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-5">
+        <h2 class="text-center">Generate New Invoice-Purchase</h2><br>
+        <form method="POST">
+            {% csrf_token %}
+
+            <div class="row mb-3 align-items-center">
+                <div class="col-md-4">
+                    <label class="form-label" style="font-size: 15px;">Bill To:</label>
+                </div>
+                <div class="col-md-6">
+                    <select class="form-control" name="invoice_to" onchange="checkAddOption(this)" required>
+                        <option value="#">--Select--</option>
+                        {% for b in customer %}
+                        <option value="{{ b.id }}">{{ b.name}}</option>
+                        {% endfor %}
+                        <option value="add_customer">Add Customer</option>
+                    </select>
+                </div>
+            </div>
+
+
+            <div class="row mb-3 align-items-center">
+                <div class="col-md-4">
+                    <label class="form-label" style="font-size: 15px;">Date: </label>
+                </div>
+                <div class="col-md-6">
+                    <input type="date" class="form-control" name="date" required><br>
+                </div>
+            </div>
+
+            
+            <div class="row mb-3 align-items-center">
+                <div class="col-md-4">
+                    <label class="form-label" style="font-size: 15px;">Number Of Items to be Billed: </label>
+                </div>
+                <div class="col-md-6">
+                    <input type="number" step="0.01" class="form-control" id="no_of_items" name="no_of_items"
+                        oninput="generateFields()" required><br>
+                </div>
+            </div>
+
+
+            <div id="fieldsContainer"></div>
+
+
+            <div class="row mb-3 align-items-center">
+                <div class="col-md-4">
+                    <label class="form-label" style="font-size: 15px;">Other Charges: </label>
+                </div>
+                <div class="col-md-6">
+                    <input type="number" step="0.01" class="form-control" name="other_charges" value="0.00"><br>
+                </div>
+            </div>
+
+            <div class="row mb-3 align-items-center">
+                <div class="col-md-4">
+                    <label class="form-label" style="font-size: 15px;">Discount: </label>
+                </div>
+                <div class="col-md-6">
+                    <input type="number" step="0.01" class="form-control" name="discount" value="0.00"><br>
+                </div>
+            </div>
+
+            <center>
+                <button type="submit" class="btn btn-primary">Submit</button>
+            </center>
+        </form>
+    </div>
+
+    <br>
+
+
+    <footer class="bg-light text-center text-lg-start mt-auto py-3">
+        <div class="container">
+            <span class="text-muted">&copy; 2024 InstaBill. All rights reserved.</span>
+        </div>
+    </footer>
+
+
+    <script>
+        function generateFields() {
+            const numberOfFields = document.getElementById('no_of_items').value;
+            const container = document.getElementById('fieldsContainer');
+            let fieldsHTML = '';
+            for (let i = 1; i <= numberOfFields; i++) {
+                fieldsHTML += `
+                <div style="background-color: rgb(242, 245, 255); border-radius: 4px; padding: 5px;">
+                    <div class="row mb-3 align-items-center">
+                    <div class="col-md-4">
+                        <label class="form-label" style="font-size: 15px;">Item ${i}</label>
+                    </div>
+                    <div class="col-md-6">
+                        <select class="form-control" name="item${i}" onchange="checkAddOption(this)">
+                            <option value="#">--Select--</option>
+                            {% for item in items %}
+                            <option value="{{ item.id }}">{{ item.name }}</option>
+                            {% endfor %}
+                            <option value="add_item">Add Item</option>
+                        </select>
+                    </div>
+                    </div>
+                    
+                    <div class="row mb-3 align-items-center">
+                    <div class="col-md-4">
+                        <label class="form-label" style="font-size: 15px;">Rate: </label>
+                    </div>
+                    <div class="col-md-6">
+                        <input type="number" step="0.01" class="form-control" name="rate${i}" required>
+                    </div>
+                    </div>
+
+                    <div class="row mb-3 align-items-center">
+                    <div class="col-md-4">
+                        <label class="form-label" style="font-size: 15px;">Quantity:</label>
+                    </div>
+                    <div class="col-md-6">
+                        <input type="number" step="0.01" class="form-control" name="quantity${i}" required>
+                    </div>
+                    </div>
+                    
+                    <div class="row mb-3 align-items-center">
+                    <div class="col-md-4">
+                        <label class="form-label" style="font-size: 15px;">Discount on item:</label>
+                    </div>
+                    <div class="col-md-6">
+                        <input type="number" step="0.01" class="form-control" name="dis${i}" required>
+                    </div>
+                    </div>
+
+                    <div class="row mb-3 align-items-center">
+                    <div class="col-md-4">
+                        <label class="form-label" style="font-size: 15px;">Unit:</label>
+                    </div>
+                    <div class="col-md-6">
+                        <input type="text" class="form-control" name="unit${i}" value="KGS">
+                    </div>
+                    </div>
+                    </div>
+                    <br>
+                `;
+            }
+            container.innerHTML = fieldsHTML;
+        }
+
+        function checkAddOption(selectElement) {
+            if (selectElement.value === "add_customer") {
+                window.location.href = "/customer_create/";
+            } else if (selectElement.value === "add_item") {
+                window.location.href = "/item_create/";
+            }
+        }
+    </script>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.7/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.3.0/js/bootstrap.min.js"></script>
+</body>
+
+</html>
