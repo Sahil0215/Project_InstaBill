@@ -89,7 +89,7 @@
             <tr >
                 <td colspan="6" style="text-align:left; font-size: 13px;" >
                     Invoice No: <b>{{invoice.invoice_no}}</b><br>
-                    Date of Invoice: <b>{{invoice.date}}</b><br>
+                    Date of Invoice: <b>{{invoice.date|date:"d/m/Y"}}</b><br>
                     Place of Supply: {{invoice.invoice_to.state}}<br>
                     E-Way Bill : {{invoice.eway}}
                 </td>
