@@ -20,6 +20,7 @@ urlpatterns = [
     path('customer_create/', customer_create, name='customer_create'),
     path('customer_read/', customer_read, name='customer_read'),
     path('customer_update/<int:pk>/', customer_update, name='customer_update'),
+    path('customer_statement/<int:pk>/', customer_statement, name='customer_statement'),
     path('customer_delete/<int:pk>/', customer_delete, name='customer_delete'),
     
     path('item_create/', item_create, name='item_create'),

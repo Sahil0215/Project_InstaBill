@@ -236,6 +236,19 @@ def customer_delete(request,pk):
     return redirect('customer_read')
 
 @login_required(login_url="/login_page/")
+def customer_statement(request,pk):
+    invoice_s = Invoice.objects.filter(invoice_to=pk).order_by('-date')
+    total_s = sum(i.grand_total for i in invoice_s)
+    invoice_p = InvoicePurchase.objects.filter(invoice_to=pk).order_by('-date')
+    total_p = sum(i.grand_total for i in invoice_p)
+    return render(request, 'customer_statement.html', {
+        'invoice_s':invoice_s, 
+        'invoice_p':invoice_p,
+        'total_p' : total_p,
+        'total_s' : total_s,
+        })
+
+@login_required(login_url="/login_page/")
 def item_create(request):
     if request.method == 'POST':
         name = request.POST.get('name').upper()
