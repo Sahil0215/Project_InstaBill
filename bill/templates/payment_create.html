@@ -17,6 +17,7 @@
             height: 200px;
             object-fit: fill;
         }
+
         body {
             font-family: 'Poppins', sans-serif;
             font-weight: 400;
@@ -61,54 +62,67 @@
                     {% endfor %}
             </ul>
             {% endif %}
-    
+
+
             <div class="row mb-3 align-items-center">
                 <div class="col-md-4">
-                    <label class="form-label" style="font-size: 15px;">Person Type:</label>
+                    <label class="form-label" style="font-size: 15px;">Select Party :</label>
                 </div>
                 <div class="col-md-6">
-                    <select class="form-control" name="person_type" required>
+                    <select class="form-control" name="payment_of" onchange="checkAddOption(this)" required>
                         <option value="#">--Select--</option>
-                        <option value="customer">Customer</option>
-                        <option value="supplier">Supplier</option>
-                        <option value="employee">Employee</option>
-                    </select>
-                </div>
-            </div>
-    
-            <div class="row mb-3 align-items-center">
-                <div class="col-md-4">
-                    <label class="form-label" style="font-size: 15px;">Select {{person_type}}:</label>
-                </div>
-                <div class="col-md-6">
-                    <select class="form-control" name="{{person_type}}" required>
-                        <option value="#">--Select--</option>
-                        {% for i in {{person_type}} %}
+                        {% for i in customer %}
                         <option value="{{ i.id }}">{{ i.name}}</option>
                         {% endfor %}
+                        <option value="add_customer">Add Customer</option>
                     </select>
                 </div>
             </div>
-    
+
             <div class="row mb-3 align-items-center">
                 <div class="col-md-4">
-                    <label class="form-label" style="font-size: 15px;">Payment Type:</label>
+                    <label class="form-label" style="font-size: 15px;">Date: </label>
                 </div>
                 <div class="col-md-6">
-                    <input type="text" class="form-control" name="payment_type" required><br>
+                    <input type="date" class="form-control" name="date" required><br>
                 </div>
             </div>
-    
+
             <div class="row mb-3 align-items-center">
                 <div class="col-md-4">
                     <label class="form-label" style="font-size: 15px;">Amount:</label>
                 </div>
                 <div class="col-md-6">
-                    <input type="number" class="form-control" name="amount" required><br>
+                    <input type="number" step="0.01" class="form-control" name="amount" required><br>
                 </div>
             </div>
-    
-    
+
+            <div class="row mb-3 align-items-center">
+                <div class="col-md-4">
+                    <label class="form-label" style="font-size: 15px;">Mode:</label>
+                </div>
+                <div class="col-md-6">
+                    <select class="form-control" name="mode" onchange="checkAddOption(this)">
+                        <option value="CASH">CASH</option>
+                        <option value="BANK">BANK</option>
+                    </select>
+                </div>
+            </div>
+
+            <div id="fieldsContainer"></div>
+
+            <div class="row mb-3 align-items-center">
+                <div class="col-md-4">
+                    <label class="form-label" style="font-size: 15px;">Payment Type:</label>
+                </div>
+                <div class="col-md-6">
+                    <select class="form-control" name="p_type">
+                        <option value="CREDIT">CREDIT</option>
+                        <option value="DEBIT">DEBIT</option>
+                    </select>
+                </div>
+            </div>
+
             <center>
                 <button type="submit" class="btn btn-primary">Save</button>
             </center>
@@ -123,6 +137,53 @@
             <span class="text-muted">&copy; 2024 InstaBill. All rights reserved.</span>
         </div>
     </footer>
+
+
+    <script>
+        function generateFields() {
+            if(p_mode=="BANK"){
+                
+                }
+        }
+
+    
+
+        function checkAddOption(selectElement) {
+            if (selectElement.value === "BANK") {
+                const container = document.getElementById('fieldsContainer');
+                let fieldsHTML = '';
+                fieldsHTML += `
+                    <div class="row mb-3 align-items-center">
+                    <div class="col-md-4">
+                        <label class="form-label" style="font-size: 15px;">Select Bank :</label>
+                    </div>
+                    <div class="col-md-6">
+                        <select class="form-control" name="bank_id" required>
+                            <option value="#">--Select--</option>
+                            {% for i in bank %}
+                            <option value="{{ i.id }}">{{ i.name}}</option>
+                            {% endfor %}
+                            <option value="add_bank">Add Bank</option>
+                        </select>
+                    </div>
+                </div>
+                    `;
+                    container.innerHTML = fieldsHTML;
+                
+            }
+            else{
+                const container = document.getElementById('fieldsContainer');
+                let fieldsHTML = '';
+                container.innerHTML = fieldsHTML;
+            } 
+            if (selectElement.value === "add_bank") {
+                window.location.href = "/bank_create/";
+            } else if (selectElement.value === "add_customer") {
+                window.location.href = "/customer_create/";
+            }
+        }
+
+    </script>
 
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>

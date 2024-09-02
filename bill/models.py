@@ -21,6 +21,7 @@ class Profile(models.Model):
     bal = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
     bill_count = models.IntegerField(blank=True, null=True, default=0)
     bank = models.ForeignKey(Bank, on_delete=models.CASCADE, blank=True, null=True, default=0)
+    cash = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
 
 
 class FinancialYear(models.Model):
@@ -103,3 +104,14 @@ class InvoicePurchase(models.Model):
     cgst_amt=models.DecimalField(max_digits=10, decimal_places=2)
     tgst_amt=models.DecimalField(max_digits=10, decimal_places=2)
     grand_total=models.DecimalField(max_digits=10, decimal_places=2)
+
+    
+
+class Payment(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    date=models.DateField(blank=True, null=True)
+    payment_of= models.ForeignKey(Customer , on_delete=models.CASCADE , blank=True, null=True)
+    amount = models.DecimalField(max_digits=10, decimal_places=2)
+    mode = models.CharField(max_length=10, blank=True, null=True)
+    p_type = models.CharField(max_length=10, blank=True, null=True)
+    bank = models.ForeignKey(Bank , on_delete=models.CASCADE , blank=True, null=True)

@@ -50,4 +50,10 @@ urlpatterns = [
     path('bank_update/<int:pk>/', bank_update, name='bank_update'),
     path('bank_delete/<int:pk>/', bank_delete, name='bank_delete'),
 
+
+    path('payment_create/', payment_create, name='payment_create'),
+    path('payment_read/', payment_read, name='payment_read'),
+    path('payment_update/<int:pk>/', payment_update, name='payment_update'),
+    path('payment_delete/<int:pk>/', payment_delete, name='payment_delete'),
+
 ]

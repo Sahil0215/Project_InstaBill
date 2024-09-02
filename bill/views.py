@@ -752,3 +752,77 @@ def company_statement(request):
         'total_stg' : total_stg,
         'total_ptg' : total_ptg,
         })
+
+@login_required(login_url="/login_page/")
+def payment_create(request):
+    if request.method == 'POST':
+        user = request.user
+        date = request.POST.get('date')
+        payment_of_id = request.POST.get('payment_of')
+        payment_of = Customer.objects.get(id=payment_of_id)
+        amount  = Decimal(request.POST.get('amount'))
+        mode = request.POST.get('mode')
+        p_type  = request.POST.get('p_type')
+        
+        if mode=="BANK":
+            bank_id = request.POST.get('bank_id')
+            bank = Bank.objects.get(id=bank_id)
+        else:
+            bank = None
+
+        payment = Payment(
+            user = user,
+            date=date,
+            payment_of = payment_of,
+            amount = amount,
+            mode = mode,
+            p_type = p_type,
+            bank = bank,
+        )
+        payment.save()
+        if p_type=="CREDIT":
+            payment_of.bal+=amount
+        else:
+            payment_of.bal-=amount
+        payment_of.save()
+        return redirect('payment_read')
+    
+    payment = Payment.objects.filter(user=request.user)
+    bank = Bank.objects.filter(user=request.user)
+    customer = Customer.objects.filter(user=request.user)
+
+    return render(request, 'payment_create.html', {'payment':payment, 'bank':bank, 'customer':customer})
+
+@login_required(login_url="/login_page/")
+def payment_read(request):
+    payment = Payment.objects.filter(user=request.user)
+    if not payment.exists():
+        messages.info(request, 'No Item Found')
+    return render(request, 'payment_read.html', {"payment":payment})
+
+
+@login_required
+def payment_update(request,pk):
+    item = Item.objects.get(id=pk)
+    if request.method=="POST":
+        name = request.POST.get('name').upper()
+        hsn = request.POST.get('hsn')
+        tax = request.POST.get('tax')
+        bal = request.POST.get('bal')
+        
+        item.name = name
+        item.hsn = hsn
+        item.tax = tax
+        item.bal = bal
+
+        item.save()
+
+        return redirect('item_read')
+
+    return render(request, 'item_update.html', {"item" : item})
+
+@login_required(login_url="/login_page/")
+def payment_delete(request, pk):
+    item=Item.objects.filter(id=pk)
+    item.delete()
+    return redirect('item_read')
