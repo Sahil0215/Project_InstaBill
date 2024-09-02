@@ -562,6 +562,14 @@ def bank_delete(request,pk):
     bank.delete()
     return redirect('bank_read')
 
+@login_required(login_url="/login_page/")
+def bank_statement(request,pk):
+    payment = Payment.objects.filter(bank=pk)
+    if not payment.exists():
+        messages.info(request, 'No Item Found')
+    return render(request, 'bank_statement.html', {"payment":payment})
+
+
 
 @login_required(login_url="/login_page/")
 def invoicepurchase_create(request):
@@ -780,11 +788,25 @@ def payment_create(request):
             bank = bank,
         )
         payment.save()
+        profile = Profile.objects.get(user=request.user)
+
         if p_type=="CREDIT":
+            if mode=="BANK":
+                bank.bal+=amount
+            elif mode=="CASH":
+                profile.cash+=amount
             payment_of.bal+=amount
-        else:
+        elif p_type=="DEBIT":
+            if mode=="BANK":
+                bank.bal-=amount
+            elif mode=="CASH":
+                profile.cash-=amount
             payment_of.bal-=amount
+        
+        
         payment_of.save()
+        bank.save()
+        profile.save()
         return redirect('payment_read')
     
     payment = Payment.objects.filter(user=request.user)
@@ -823,6 +845,21 @@ def payment_update(request,pk):
 
 @login_required(login_url="/login_page/")
 def payment_delete(request, pk):
-    item=Item.objects.filter(id=pk)
-    item.delete()
-    return redirect('item_read')
+    payment=Payment.objects.get(id=pk)
+    if payment.p_type=="CREDIT":
+        if payment.mode=="BANK":
+            payment.bank.bal-=payment.amount
+        elif payment.mode=="CASH":
+            payment.profile.cash-=payment.amount
+        payment.payment_of.bal-=payment.amount
+    elif payment.p_type=="DEBIT":
+        if payment.mode=="BANK":
+            payment.bank.bal+=payment.amount
+        elif payment.mode=="CASH":
+            payment.profile.cash+=payment.amount
+        payment.payment_of.bal+=payment.amount
+    
+    payment.payment_of.save()
+    payment.bank.save()
+    payment.delete()
+    return redirect('payment_read')
