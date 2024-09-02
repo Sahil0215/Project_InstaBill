@@ -23,6 +23,8 @@ urlpatterns = [
     path('customer_statement/<int:pk>/', customer_statement, name='customer_statement'),
     path('customer_delete/<int:pk>/', customer_delete, name='customer_delete'),
     
+    path('company_statement/', company_statement, name='company_statement'),
+    
     path('item_create/', item_create, name='item_create'),
     path('item_read/', item_read, name='item_read'),
     path('item_update/<int:pk>/', item_update, name='item_update'),
