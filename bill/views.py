@@ -239,13 +239,29 @@ def customer_delete(request,pk):
 def customer_statement(request,pk):
     invoice_s = Invoice.objects.filter(invoice_to=pk).order_by('-date')
     total_s = sum(i.grand_total for i in invoice_s)
+    total_ssg = sum(i.sgst_amt for i in invoice_s)
+    total_scg = sum(i.cgst_amt for i in invoice_s)
+    total_sig = sum(i.igst_amt for i in invoice_s)
+    total_stg = sum(i.tgst_amt for i in invoice_s)
     invoice_p = InvoicePurchase.objects.filter(invoice_to=pk).order_by('-date')
     total_p = sum(i.grand_total for i in invoice_p)
-    return render(request, 'customer_statement.html', {
+    total_psg = sum(i.sgst_amt for i in invoice_p)
+    total_pcg = sum(i.cgst_amt for i in invoice_p)
+    total_pig = sum(i.igst_amt for i in invoice_p)
+    total_ptg = sum(i.tgst_amt for i in invoice_p)
+    return render(request, 'company_statement.html', {
         'invoice_s':invoice_s, 
         'invoice_p':invoice_p,
         'total_p' : total_p,
         'total_s' : total_s,
+        'total_ssg' : total_ssg,
+        'total_scg' : total_scg,
+        'total_sig' : total_sig,
+        'total_psg' : total_psg,
+        'total_pcg' : total_pcg,
+        'total_pig' : total_pig,
+        'total_stg' : total_stg,
+        'total_ptg' : total_ptg,
         })
 
 @login_required(login_url="/login_page/")
@@ -458,7 +474,7 @@ def invoice_delete(request, pk):
         profile.bill_count -= 1
         profile.save()
     
-    invoice = Invoice.objects.get(user=request.user)
+    invoice = Invoice.objects.get(id=pk)
     if invoice.invoice_to:
         invoice.invoice_to.bal += invoice.grand_total
         invoice.invoice_to.save()
@@ -678,7 +694,7 @@ def invoicepurchase_read(request):
 
 @login_required(login_url="/login_page/")
 def invoicepurchase_delete(request, pk):
-    invoice = InvoicePurchase.objects.get(user=request.user)
+    invoice = InvoicePurchase.objects.get(id=pk)
     if invoice.invoice_to:
         invoice.invoice_to.bal -= invoice.grand_total
         invoice.invoice_to.save()
@@ -706,3 +722,33 @@ def invoicepurchase_billbook(request):
     profile = Profile.objects.get(user=request.user)
     x=range(1,20)
     return render(request, 'invoicepurchase_billbook.html', {"invoices":invoice, "profile":profile, 'x':x})
+
+
+@login_required(login_url="/login_page/")
+def company_statement(request):
+    invoice_s = Invoice.objects.filter(user=request.user).order_by('-date')
+    total_s = sum(i.grand_total for i in invoice_s)
+    total_ssg = sum(i.sgst_amt for i in invoice_s)
+    total_scg = sum(i.cgst_amt for i in invoice_s)
+    total_sig = sum(i.igst_amt for i in invoice_s)
+    total_stg = sum(i.tgst_amt for i in invoice_s)
+    invoice_p = InvoicePurchase.objects.filter(user=request.user).order_by('-date')
+    total_p = sum(i.grand_total for i in invoice_p)
+    total_psg = sum(i.sgst_amt for i in invoice_p)
+    total_pcg = sum(i.cgst_amt for i in invoice_p)
+    total_pig = sum(i.igst_amt for i in invoice_p)
+    total_ptg = sum(i.tgst_amt for i in invoice_p)
+    return render(request, 'company_statement.html', {
+        'invoice_s':invoice_s, 
+        'invoice_p':invoice_p,
+        'total_p' : total_p,
+        'total_s' : total_s,
+        'total_ssg' : total_ssg,
+        'total_scg' : total_scg,
+        'total_sig' : total_sig,
+        'total_psg' : total_psg,
+        'total_pcg' : total_pcg,
+        'total_pig' : total_pig,
+        'total_stg' : total_stg,
+        'total_ptg' : total_ptg,
+        })
