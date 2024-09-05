@@ -132,7 +132,7 @@ def view_profile(request):
 @login_required(login_url="/login_page/")
 def update_profile(request):
     profile = Profile.objects.get(user=request.user)  # Get the profile of the logged-in user
-    bank = Bank.objects.all()
+    bank = Bank.objects.filter(user=request.user)
 
     if request.method == 'POST':
         c_name = request.POST.get('c_name').upper()
