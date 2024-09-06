@@ -365,7 +365,7 @@ def invoice_create(request):
                 
             amount=rate*quantity
             taxval = amount-dis
-            taxable_before += taxval
+            taxable_before += amount
 
             billedItem_object = BilledItem(
                 item_details= item_details,
