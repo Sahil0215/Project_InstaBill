@@ -410,6 +410,7 @@ def invoice_create(request):
             item.save()
 
             tgst += sgst_amt+cgst_amt+igst_amt
+            discount += item.dis
 
         grand_total = taxable_after + tgst
 
