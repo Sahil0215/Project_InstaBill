@@ -63,7 +63,7 @@
             </ul>
             {% endif %}
 
-
+            
             <div class="row mb-3 align-items-center">
                 <div class="col-md-4">
                     <label class="form-label" style="font-size: 15px;">Select Party :</label>
@@ -75,6 +75,19 @@
                         <option value="{{ i.id }}">{{ i.name}}</option>
                         {% endfor %}
                         <option value="add_customer">Add Customer</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="row mb-3 align-items-center">
+                <div class="col-md-4">
+                    <label class="form-label" style="font-size: 15px;">Payment Type:</label>
+                </div>
+                <div class="col-md-6">
+                    <select class="form-control" name="p_type">
+                        <option value="">--SELECT--</option>
+                        <option style="background-color: rgba(0, 255, 60, 0.752);" value="CREDIT">CREDIT</option>
+                        <option style="background-color: rgb(255, 0, 0);" value="DEBIT">DEBIT</option>
                     </select>
                 </div>
             </div>
@@ -111,17 +124,6 @@
 
             <div id="fieldsContainer"></div>
 
-            <div class="row mb-3 align-items-center">
-                <div class="col-md-4">
-                    <label class="form-label" style="font-size: 15px;">Payment Type:</label>
-                </div>
-                <div class="col-md-6">
-                    <select class="form-control" name="p_type">
-                        <option value="CREDIT">CREDIT</option>
-                        <option value="DEBIT">DEBIT</option>
-                    </select>
-                </div>
-            </div>
 
             <center>
                 <button type="submit" class="btn btn-primary">Save</button>

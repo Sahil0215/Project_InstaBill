@@ -249,7 +249,7 @@ def customer_statement(request,pk):
     total_pcg = sum(i.cgst_amt for i in invoice_p)
     total_pig = sum(i.igst_amt for i in invoice_p)
     total_ptg = sum(i.tgst_amt for i in invoice_p)
-    return render(request, 'company_statement.html', {
+    return render(request, 'customer_statement.html', {
         'invoice_s':invoice_s, 
         'invoice_p':invoice_p,
         'total_p' : total_p,
