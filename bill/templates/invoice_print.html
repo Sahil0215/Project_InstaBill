@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    {% load static %}
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>View Invoice</title>
@@ -224,7 +225,7 @@
                     <br>
                     <div style="text-align: right;">Receiver's Signature</div>
                 </td>
-                    <td colspan="5"><b>For {{profile.name}}</b><br><br><br><br><br>Authorized Signature</td>
+                    <td colspan="5"><b>For {{profile.name}}</b><br><img src="{% static 'images/Rampal_Sign_Blue.jpeg' %}" height="50px" width="120px"><br>Authorized Signature</td>
                 </tr>
             </tbody>
         </table>
