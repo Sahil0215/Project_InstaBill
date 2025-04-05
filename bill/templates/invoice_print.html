@@ -81,15 +81,15 @@
                 <td colspan="4" class="no-border-left-right" style="text-align: center;">TAX INVOICE</td>
                 <td colspan="4" class="no-border-left-o" style="text-align: right; padding-right:10px">{{i}}</td>
             </tr>
-            <tr>
+            <!-- <tr>
                 <td colspan="12" height="15" class="no-border-o"></td>
-            </tr>
+            </tr> -->
             <tr>
                 <td colspan="12"><h2 style="margin: 0px;">{{ profile.name }}</h2>{{ profile.adrs }}<br>{{ profile.city }}, {{ profile.state}}<br>Phone: {{ profile.phone }} E-Mail: {{ profile.email }}</td>
             </tr>
             <tr >
                 <td colspan="6" style="text-align:left; font-size: 13px;" >
-                    Invoice No: <b>{{invoice.invoice_no}}</b><br>
+                    Invoice No: <b>{{invoice.invoice_no|stringformat:"03d" }}</b><br>
                     Date of Invoice: <b>{{invoice.date|date:"d/m/Y"}}</b><br>
                     Place of Supply: {{invoice.invoice_to.state}}<br>
                     E-Way Bill : {{invoice.eway}}
@@ -213,7 +213,7 @@
                 </td>
             </tr>
             <tr class="amt">
-                <td colspan="7" style="font-size: 13px;">{{invoice.grand_total_words}}</td><td colspan="5">GRAND TOTAL : {{invoice.grand_total}} </td>
+                <td colspan="7" style="font-size: 13px;">{{invoice.grand_total_words}}</td><td colspan="4" style ="border:none;">GRAND TOTAL : </td><td style ="text-align: right;  border-left:none;">{{invoice.grand_total}} </td>
             </tr>
             <tr class = "terms_and_condition">
                 <td colspan="7" style="text-align: left;">
