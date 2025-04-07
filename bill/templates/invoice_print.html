@@ -73,35 +73,39 @@
     </style>
 </head>
 <body>
+    <center><button id="download">Downlaod PDF</button></center>
+    <div id="bill" style="padding-right: 8px;">
+
         {% for i in bill_of %}
-        <table id="invoice" style="page-break-before: always;">
+        <table id="invoice">
+            <!-- style="page-break-before: always;" -->
             <tbody>
                 <tr class="bold">
-                <td colspan="4" class="no-border-right" style="text-align: left; padding-left:10px;">GSTIN: {{ profile.gst }}</td>
-                <td colspan="4" class="no-border-left-right" style="text-align: center;">TAX INVOICE</td>
-                <td colspan="4" class="no-border-left-o" style="text-align: right; padding-right:10px">{{i}}</td>
-            </tr>
-            <!-- <tr>
-                <td colspan="12" height="15" class="no-border-o"></td>
-            </tr> -->
-            <tr>
-                <td colspan="12"><h2 style="margin: 0px;">{{ profile.name }}</h2>{{ profile.adrs }}<br>{{ profile.city }}, {{ profile.state}}<br>Phone: {{ profile.phone }} E-Mail: {{ profile.email }}</td>
-            </tr>
-            <tr >
-                <td colspan="6" style="text-align:left; font-size: 13px;" >
+                    <td colspan="4" class="no-border-right" style="text-align: left; padding-left:10px; border-bottom: none;">GSTIN: {{ profile.gst }}</td>
+                    <td colspan="4" class="no-border-left-right" style="text-align: center; border-bottom: none;">TAX INVOICE</td>
+                    <td colspan="4" class="no-border-left-o" style="text-align: right; padding-right:10px; border-bottom: none;">{{i}}</td>
+                </tr>
+                <!-- <tr>
+                    <td colspan="12" height="15" class="no-border-o"></td>
+                </tr> -->
+                <tr>
+                    <td colspan="12" style="border-top: none; border-bottom: none;"><h2 style="margin: 0px;">{{ profile.name }}</h2>{{ profile.adrs }}<br>{{ profile.city }}, {{ profile.state}}<br>Phone: {{ profile.phone }} E-Mail: {{ profile.email }}</td>
+                </tr>
+                <tr >
+                <td colspan="6" style="text-align:left; font-size: 13px; border-bottom: none; border-right: none;" >
                     Invoice No: <b>{{invoice.invoice_no|stringformat:"03d" }}</b><br>
                     Date of Invoice: <b>{{invoice.date|date:"d/m/Y"}}</b><br>
                     Place of Supply: {{invoice.invoice_to.state}}<br>
                     E-Way Bill : {{invoice.eway}}
                 </td>
-                <td colspan="6" style="text-align:left; font-size: 13px;" >
+                <td colspan="6" style="text-align:left; font-size: 13px; border-bottom: none;" >
                     P O No.:<br>
                     TRANSPORT: {{ invoice.transport }} <br>
                     VEHICLE NO: <b>{{ invoice.vehicle_no }}</b> <br><br>
                 </td>
             </tr>
             <tr >
-                <td colspan="6" style="text-align:left; font-size: 13px;" >
+                <td colspan="6" style="text-align:left; font-size: 13px; border-bottom: none; border-right: none;" >
                     <i><u>Billed To:</u></i><br>
                     <b>{{ invoice.invoice_to.name }}</b><br>
                     {{ invoice.invoice_to.adrs }}<br>
@@ -110,7 +114,7 @@
                     Phone No. :{{ invoice.invoice_to.phone }}<br>
                     <b>GSTIN :  {{ invoice.invoice_to.gst }}</b>
                 </td>
-                <td colspan="6" style="text-align:left; font-size: 13px;" >
+                <td colspan="6" style="text-align:left; font-size: 13px; border-bottom: none;" >
                     <i><u>Shipped To:</u></i><br>
                     <b>{{ invoice.ship_to.name }}</b><br>
                     {{ invoice.ship_to.adrs }}<br>
@@ -121,14 +125,14 @@
                 </td>
             </tr>
             <tr class="bold">
-                <td style="width: 10px;">S.No.</td>
-                <td colspan="4">Description of Goods</td>
-                <td>HSN</td>
-                <td>QTY</td>
-                <td>RATE</td>
-                <td>IGST</td>
-                <td>SGST</td>
-                <td>CGST</td>
+                <td style="border-right: none; width: 10px;">S.No.</td>
+                <td style="border-right: none;" colspan="4">Description of Goods</td>
+                <td style="border-right: none;">HSN</td>
+                <td style="border-right: none;">QTY</td>
+                <td style="border-right: none;">RATE</td>
+                <td style="border-right: none;">IGST</td>
+                <td style="border-right: none;">SGST</td>
+                <td style="border-right: none;">CGST</td>
                 <td>Amount</td>
             </tr>
             
@@ -146,10 +150,10 @@
             </tr>
             {% endfor %}
             
-        
+            
             {% for i in x %}
             <tr class="items">
-            <td class="no-border"><BR></td>
+                <td class="no-border"><BR></td>
             <td colspan="4" class="no-border"></td>
             <td class="no-border"></td>
             <td class="no-border"></td>
@@ -158,21 +162,21 @@
             <td class="no-border"></td>
             <td class="no-border"></td>
             <td class="no-border-left"></td>
-            </tr>
-            {% endfor %}
-
-            
-
+        </tr>
+        {% endfor %}
+        
+        
+        
         <tr class="terms">
-            <td colspan="7" style="text-align: left;">
+            <td colspan="7" style="text-align: left; border-bottom: none; border-right: none;">
                 <u><i>BANK DETAILS:</i></u><br>
                 <b>BANK: {{profile.bank.name}}<br>
                     A/C No.: {{profile.bank.acno}}<br>
                     IFS CODE: {{profile.bank.ifsc}}<br>
-                        BRANCH: {{profile.bank.branch}}</b>
-                    </td>
-                    
-                    <td colspan="5">
+                    BRANCH: {{profile.bank.branch}}</b>
+                </td>
+                
+                <td colspan="5" style="border-bottom:none;">
                     <table style="border: none;">
                         <tr style="height:15px;">
                             <td style="border-top: none; border-left: none; border-right: none; text-align: left;">Total</td>
@@ -213,10 +217,10 @@
                 </td>
             </tr>
             <tr class="amt">
-                <td colspan="7" style="font-size: 13px;">{{invoice.grand_total_words}}</td><td colspan="4" style ="border:none;">GRAND TOTAL : </td><td style ="text-align: right;  border-left:none;">{{invoice.grand_total}} </td>
+                <td colspan="7" style="font-size: 13px; border-right: none;">{{invoice.grand_total_words}}</td><td colspan="4" style ="border-right:none; ">GRAND TOTAL : </td><td style ="text-align: right;  border-left:none;">{{invoice.grand_total}} </td>
             </tr>
             <tr class = "terms_and_condition">
-                <td colspan="7" style="text-align: left;">
+                <td colspan="7" style="text-align: left; border-top: none; border-right: none;">
                     <u><i>Terms & Conditions</i></u><br>
                     Goods once sold will not be taken back or exchanged.<br>
                     Bills not paid due date will attract 24% interest.<br>
@@ -225,11 +229,31 @@
                     <br>
                     <div style="text-align: right;">Receiver's Signature</div>
                 </td>
-                    <td colspan="5"><b>For {{profile.name}}</b><br><img src="{% static 'images/Rampal_Sign_Blue.jpeg' %}" height="50px" width="120px"><br>Authorized Signature</td>
-                </tr>
-            </tbody>
-        </table>
-        {% endfor %}
-        
+                <td colspan="5" style="border-top:none;"><b>For {{profile.name}}</b><br><img src="{% static 'images/Rampal_Sign_Blue.jpeg' %}" height="50px" width="120px"><br>Authorized Signature</td>
+            </tr>
+        </tbody>
+    </table>
+    <br>
+    {% endfor %}
+    </div>
+    <script>
+        window.onload = function () {
+    document.getElementById("download")
+        .addEventListener("click", () => {
+            const invoice = this.document.getElementById("bill");
+            console.log(invoice);
+            console.log(window);
+            var opt = {
+                margin: [0.3, 0.3, 0.3, 0.3],
+                filename: 'myfile.pdf',
+                image: { type: 'jpeg', quality: 1.0 },
+                html2canvas: { scale: 2 },
+                jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
+            };
+            html2pdf().from(invoice).set(opt).save();
+        })
+}
+
+        </script>
     </body>
     </html>

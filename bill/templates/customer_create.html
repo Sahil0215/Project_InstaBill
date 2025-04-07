@@ -173,9 +173,13 @@
             </center>
         </form>
     </div>
-
+    
     <br>
+    
+    <input type="text" id="gstin" placeholder="Enter GSTIN" />
+    <button onclick="getGSTDetails()">Get Details</button>
 
+    <div id="gst-details"></div>
 
     <footer class="bg-light text-center text-lg-start mt-auto py-3">
         <div class="container">
@@ -183,6 +187,33 @@
         </div>
     </footer>
 
+    <script>
+        function getGSTDetails() {
+            const gstin = document.getElementById("gstin").value;
+            const apiKey = "YOUR_FREE_KEY_HERE";  // Replace with your actual API key
+
+            fetch(`https://appyflow.in/api/verifyGST?gstNo=${gstin}&key=${apiKey}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.error) {
+                        document.getElementById("gst-details").innerText = "Invalid GSTIN or limit reached.";
+                        return;
+                    }
+
+                    document.getElementById("gst-details").innerHTML = `
+                        <p><strong>Legal Name:</strong> ${data.legalName}</p>
+                        <p><strong>Trade Name:</strong> ${data.tradeName}</p>
+                        <p><strong>Address:</strong> ${data.address}</p>
+                        <p><strong>State:</strong> ${data.stateJurisdiction}</p>
+                        <p><strong>Status:</strong> ${data.status}</p>
+                    `;
+                })
+                .catch(error => {
+                    console.error("Error fetching GSTIN details:", error);
+                    document.getElementById("gst-details").innerText = "Error fetching details.";
+                });
+        }
+</script>
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.7/dist/umd/popper.min.js"></script>
