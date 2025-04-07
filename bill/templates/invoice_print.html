@@ -244,7 +244,7 @@
             console.log(window);
             var opt = {
                 margin: [0.3, 0.3, 0.292, 0.3],
-                filename: 'myfile.pdf',
+                filename: 'Invoice{{invoice.invoice_no}}.pdf',
                 image: { type: 'jpeg', quality: 1.0 },
                 html2canvas: { scale: 2 },
                 jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
