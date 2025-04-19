@@ -931,3 +931,112 @@ def payment_delete(request, pk):
     payment.bank.save()
     payment.delete()
     return redirect('payment_read')
+
+
+# View to create a new employee
+
+def employee_create(request):
+    if request.method == 'POST':
+        # Extract data from the request
+        name = request.POST.get('name')
+        email = request.POST.get('email')
+        phone = request.POST.get('phone')
+        gender = request.POST.get('gender')
+        role = request.POST.get('role')
+        bal = request.POST.get('bal')
+
+        # Create and save the new employee object
+        try:
+            employee = Employee(
+                user=request.user,
+                name=name,
+                email=email,
+                phone=phone,
+                gender=gender,
+                role=role,
+                bal=bal if bal else 0.00  # Default to 0 if balance is not provided
+            )
+            employee.save()
+
+            # Provide success feedback
+            messages.success(
+                request, f'Employee {employee.name} added successfully.')
+            # Assuming you have a list page for employees
+            return redirect('employee_read')
+
+        except Exception as e:
+            messages.error(request, f'Error creating employee: {e}')
+            return redirect('employee_create')
+
+    return render(request, 'employee_create.html')
+
+
+@login_required(login_url="/login_page/")
+def employee_read(request):
+    employee = Employee.objects.filter(user=request.user)
+    if not employee.exists():
+        messages.info(request, 'No Employee Found')
+    return render(request, 'employee_read.html', {"employee": employee})
+
+
+@login_required(login_url="/login_page/")
+def employee_delete(request, pk):
+    employee = Employee.objects.filter(id=pk)
+    employee.delete()
+    return redirect('employee_read')
+
+
+@login_required(login_url="/login_page/")
+def process_create(request):
+    if request.method == 'POST':
+        user = request.user
+        date = request.POST.get('date')
+        source_item_id = request.POST.get('source_item_id')
+        output_item_id = request.POST.get('output_item_id')
+        employee_id = request.POST.get('employee_id')
+        source_item = Item.objects.get(id=source_item_id)
+        output_item = Item.objects.get(id=output_item_id)
+        employee = Employee.objects.get(id=employee_id)
+        quantity = Decimal(request.POST.get('quantity'))
+        wastage = Decimal(request.POST.get('wastage'))
+
+        expected_input = round(quantity*Decimal(100.00) /
+                               (Decimal(100.00)-wastage))
+        source_item.bal -= expected_input
+        source_item.save()
+
+        output_item.bal += quantity
+        output_item.save()
+
+        record = ProcessingRecord(
+            user=user,
+            source_item=source_item,
+            output_item=output_item,
+            quantity_out=quantity,
+            wastage_percent=wastage,
+            employee=employee,
+            processed_at=date,
+        )
+        record.save()
+
+        return redirect('process_read')
+
+    employee = Employee.objects.filter(user=request.user)
+    item = Item.objects.filter(user=request.user)
+
+    return render(request, 'process_create.html', {'item': item, 'employee': employee})
+
+
+@login_required(login_url="/login_page/")
+def process_read(request):
+    process = ProcessingRecord.objects.filter(user=request.user)
+    if not process.exists():
+        messages.info(request, 'No process Found')
+    return render(request, 'process_read.html', {"process": process})
+
+
+@login_required(login_url="/login_page/")
+def process_delete(request, pk):
+    process = ProcessingRecord.objects.filter(id=pk)
+    process.delete()
+    return redirect('process_read')

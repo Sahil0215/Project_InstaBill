@@ -31,6 +31,14 @@ urlpatterns = [
     path('item_update/<int:pk>/', item_update, name='item_update'),
     path('item_delete/<int:pk>/', item_delete, name='item_delete'),
 
+    path('employee_create/', employee_create, name='employee_create'),
+    path('employee_read/', employee_read, name='employee_read'),
+    path('employee_delete/<int:pk>/', employee_delete, name='employee_delete'),
+
+    path('process_create/', process_create, name='process_create'),
+    path('process_read/', process_read, name='process_read'),
+    path('process_delete/<int:pk>/', process_delete, name='process_delete'),
+
     path('invoice_create/', invoice_create, name='invoice_create'),
     path('invoice_read/', invoice_read, name='invoice_read'),
     path('invoice_billbook/', invoice_billbook, name='invoice_billbook'),
