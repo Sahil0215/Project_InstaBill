@@ -17,6 +17,7 @@
             height: 200px;
             object-fit: fill;
         }
+
         body {
             font-family: 'Poppins', sans-serif;
             font-weight: 400;
@@ -186,45 +187,36 @@
                 fieldsHTML += `
                 <div style="background-color: rgb(242, 245, 255); border-radius: 4px; padding: 5px;">
                     <div class="row mb-3 align-items-center">
-                    <div class="col-md-4">
-                        <label class="form-label" style="font-size: 15px;">Item ${i}</label>
-                    </div>
-                    <div class="col-md-6">
-                        <select class="form-control" name="item${i}" onchange="checkAddOption(this)">
-                            <option value="#">--Select--</option>
-                            {% for item in items %}
-                            <option value="{{ item.id }}">{{ item.name }}</option>
-                            {% endfor %}
-                            <option value="add_item">Add Item</option>
-                        </select>
-                    </div>
+                        <div class="col-md-4">
+                            <label class="form-label" style="font-size: 15px;">Item ${i}</label>
+                        </div>
+                        <div class="col-md-6">
+                            <select class="form-control" name="item${i}" onchange="checkAddOption(this)">
+                                <option value="#">--Select--</option>
+                                {% for item in items %}
+                                <option value="{{ item.id }}">{{ item.name }}</option>
+                                {% endfor %}
+                                <option value="add_item">Add Item</option>
+                            </select>
+                        </div>
                     </div>
                     
                     <div class="row mb-3 align-items-center">
-                    <div class="col-md-4">
-                        <label class="form-label" style="font-size: 15px;">Rate: </label>
-                    </div>
-                    <div class="col-md-6">
-                        <input type="number" step="0.01" class="form-control" name="rate${i}" required>
-                    </div>
+                        <div class="col-md-4">
+                            <label class="form-label" style="font-size: 15px;">Rate: </label>
+                        </div>
+                        <div class="col-md-6">
+                            <input type="number" step="0.01" class="form-control" name="rate${i}" required>
+                        </div>
                     </div>
 
                     <div class="row mb-3 align-items-center">
-                    <div class="col-md-4">
-                        <label class="form-label" style="font-size: 15px;">Quantity:</label>
-                    </div>
-                    <div class="col-md-6">
-                        <input type="number" step="0.01" class="form-control" name="quantity${i}" required>
-                    </div>
-                    </div>
-                    
-                    <div class="row mb-3 align-items-center">
-                    <div class="col-md-4">
-                        <label class="form-label" style="font-size: 15px;">Discount on item:</label>
-                    </div>
-                    <div class="col-md-6">
-                        <input type="number" step="0.01" class="form-control" name="dis${i}" value="0.00">
-                    </div>
+                        <div class="col-md-4">
+                            <label class="form-label" style="font-size: 15px;">Quantity:</label>
+                        </div>
+                        <div class="col-md-6">
+                            <input type="number" step="0.01" class="form-control" name="quantity${i}" required>
+                        </div>
                     </div>
 
                     <div class="row mb-3 align-items-center">

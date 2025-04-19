@@ -34,7 +34,12 @@ urlpatterns = [
     path('invoice_create/', invoice_create, name='invoice_create'),
     path('invoice_read/', invoice_read, name='invoice_read'),
     path('invoice_billbook/', invoice_billbook, name='invoice_billbook'),
-    path('invoice_print/<int:pk>/', invoice_print, name='invoice_print'),
+    path('invoice_print_original/<int:pk>/',
+         invoice_print_original, name='invoice_print_original'),
+    path('invoice_print_duplicate/<int:pk>/',
+         invoice_print_duplicate, name='invoice_print_duplicate'),
+    path('invoice_print_triplicate/<int:pk>/',
+         invoice_print_triplicate, name='invoice_print_triplicate'),
     path('invoice_update/<int:pk>/', invoice_update, name='invoice_update'),
     path('invoice_delete/<int:pk>/', invoice_delete, name='invoice_delete'),
 

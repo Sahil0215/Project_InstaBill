@@ -516,12 +516,29 @@ def invoice_delete(request, pk):
 
 
 @login_required(login_url="/login_page/")
-def invoice_print(request, pk):
+def invoice_print_original(request, pk):
     profile = Profile.objects.get(user=request.user)
     invoice = Invoice.objects.get(id=pk)
-    bill_of = ["Original for Buyer",
-               "Duplicate for Transporter", "Triplicate for Assessee"]
-    x = range(1, 19)
+    bill_of = "Original for Buyer"
+    x = range(1, 17)
+    return render(request, 'invoice_print.html', {'invoice': invoice, 'profile': profile, 'x': x, 'bill_of': bill_of})
+
+
+@login_required(login_url="/login_page/")
+def invoice_print_duplicate(request, pk):
+    profile = Profile.objects.get(user=request.user)
+    invoice = Invoice.objects.get(id=pk)
+    bill_of = "Duplicate for Transporter"
+    x = range(1, 17)
+    return render(request, 'invoice_print.html', {'invoice': invoice, 'profile': profile, 'x': x, 'bill_of': bill_of})
+
+
+@login_required(login_url="/login_page/")
+def invoice_print_triplicate(request, pk):
+    profile = Profile.objects.get(user=request.user)
+    invoice = Invoice.objects.get(id=pk)
+    bill_of = "Triplicate for Transporter"
+    x = range(1, 17)
     return render(request, 'invoice_print.html', {'invoice': invoice, 'profile': profile, 'x': x, 'bill_of': bill_of})
 
 

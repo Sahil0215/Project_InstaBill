@@ -17,6 +17,7 @@
             height: 200px;
             object-fit: fill;
         }
+
         body {
             font-family: 'Poppins', sans-serif;
             font-weight: 400;
@@ -55,7 +56,7 @@
         <a href="{% url 'invoice_create' %}" class="btn btn-primary">Add Invoice</a>
         <a href="{% url 'invoice_billbook' %}" class="btn btn-secondary">Print Billbook</a>
     </center>
-    
+
 
     <div class="container mt-4">
         <div class="row">
@@ -75,9 +76,10 @@
                         </div>
                     </div>
                     <div class="card-footer d-flex justify-content-between">
-                        <a href="{% url 'invoice_print' invoice.id %}" class="btn btn-primary">Print</a>
+                        <button class="btn btn-primary" onclick="showPrintOptions({{invoice.id}})">Print</button>
                         <a href="{% url 'invoice_update' invoice.id %}" class="btn btn-warning">Edit</a>
-                        <a href="{% url 'invoice_delete' invoice.id %}" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this invoice?');">Delete</a>
+                        <a href="{% url 'invoice_delete' invoice.id %}" class="btn btn-danger"
+                            onclick="return confirm('Are you sure you want to delete this invoice?');">Delete</a>
                     </div>
                 </div>
             </div>
@@ -92,16 +94,53 @@
     </div>
     {% endif %}
     <br><br>
-    
+
     <footer class="bg-light text-center text-lg-start mt-auto py-3">
         <div class="container">
             <span class="text-muted">&copy; 2024 InstaBill. All rights reserved.</span>
         </div>
     </footer>
 
+
+    <!-- Print Options Modal -->
+    <div class="modal fade" id="printOptionsModal" tabindex="-1" aria-labelledby="printOptionsLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="printOptionsLabel">Select Print Type</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body text-center">
+                    <button class="btn btn-outline-primary m-2" onclick="printInvoice('original')">Original</button>
+                    <button class="btn btn-outline-secondary m-2" onclick="printInvoice('duplicate')">Duplicate</button>
+                    <button class="btn btn-outline-success m-2" onclick="printInvoice('triplicate')">Triplicate</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.7/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.3.0/js/bootstrap.min.js"></script>
+    <script>
+        let currentInvoiceId = null;
+
+        function showPrintOptions(invoiceId) {
+            currentInvoiceId = invoiceId;
+            var myModal = new bootstrap.Modal(document.getElementById('printOptionsModal'));
+            myModal.show();
+        }
+
+        function printInvoice(type) {
+            if (currentInvoiceId) {
+                // You can customize your URL pattern accordingly
+                const url = `/invoice_print_${type}/${currentInvoiceId}`;
+                window.location.href = url;
+            }
+        }
+    </script>
+
 </body>
 
 </html>
