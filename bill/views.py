@@ -790,34 +790,42 @@ def invoicepurchase_billbook(request):
 
 @login_required(login_url="/login_page/")
 def company_statement(request):
-    invoice_s = Invoice.objects.filter(user=request.user).order_by('-date')
-    total_s = sum(i.grand_total for i in invoice_s)
-    total_ssg = sum(i.sgst_amt for i in invoice_s)
-    total_scg = sum(i.cgst_amt for i in invoice_s)
-    total_sig = sum(i.igst_amt for i in invoice_s)
-    total_stg = sum(i.tgst_amt for i in invoice_s)
+    start_date = request.GET.get('start_date')
+    end_date = request.GET.get('end_date')
+
+    invoice_s = Invoice.objects.filter(
+        user=request.user).order_by('-invoice_no')
     invoice_p = InvoicePurchase.objects.filter(
         user=request.user).order_by('-date')
-    total_p = sum(i.grand_total for i in invoice_p)
-    total_psg = sum(i.sgst_amt for i in invoice_p)
-    total_pcg = sum(i.cgst_amt for i in invoice_p)
-    total_pig = sum(i.igst_amt for i in invoice_p)
-    total_ptg = sum(i.tgst_amt for i in invoice_p)
-    return render(request, 'company_statement.html', {
+
+    if start_date and end_date:
+        try:
+            start = datetime.strptime(start_date, '%Y-%m-%d')
+            end = datetime.strptime(end_date, '%Y-%m-%d')
+            invoice_s = invoice_s.filter(date__range=(start, end))
+            invoice_p = invoice_p.filter(date__range=(start, end))
+        except:
+            pass  # optionally add error handling
+
+    context = {
         'invoice_s': invoice_s,
         'invoice_p': invoice_p,
-        'total_p': total_p,
-        'total_s': total_s,
-        'total_ssg': total_ssg,
-        'total_scg': total_scg,
-        'total_sig': total_sig,
-        'total_psg': total_psg,
-        'total_pcg': total_pcg,
-        'total_pig': total_pig,
-        'total_stg': total_stg,
-        'total_ptg': total_ptg,
-    })
-
+        'total_s': sum(i.grand_total for i in invoice_s),
+        'total_p': sum(i.grand_total for i in invoice_p),
+        'total_ssg': sum(i.sgst_amt for i in invoice_s),
+        'total_scg': sum(i.cgst_amt for i in invoice_s),
+        'total_sig': sum(i.igst_amt for i in invoice_s),
+        'total_stg': sum(i.tgst_amt for i in invoice_s),
+        'total_psg': sum(i.sgst_amt for i in invoice_p),
+        'total_pcg': sum(i.cgst_amt for i in invoice_p),
+        'total_pig': sum(i.igst_amt for i in invoice_p),
+        'total_ptg': sum(i.tgst_amt for i in invoice_p),
+        'total_tax': (
+            sum(i.tgst_amt for i in invoice_s) -
+            sum(i.tgst_amt for i in invoice_p)
+        )
+    }
+    return render(request, 'company_statement.html', context)
 
 @login_required(login_url="/login_page/")
 def payment_create(request):
