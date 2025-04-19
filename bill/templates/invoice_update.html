@@ -17,6 +17,7 @@
             height: 200px;
             object-fit: fill;
         }
+
         body {
             font-family: 'Poppins', sans-serif;
             font-weight: 400;
@@ -61,7 +62,8 @@
                     <select class="form-control" name="invoice_to" onchange="checkAddOption(this)" required>
                         <option value="#">--Select--</option>
                         {% for b in customer %}
-                        <option value="{{ b.id }}" {% if invoice.invoice_to.id == b.id %}selected{% endif %}>{{ b.name}}</option>
+                        <option value="{{ b.id }}" {% if invoice.invoice_to.id==b.id %}selected{% endif %}>{{ b.name}}
+                        </option>
                         {% endfor %}
                         <option value="add_customer">Add Customer</option>
                     </select>
@@ -110,7 +112,8 @@
                     <label class="form-label" style="font-size: 15px;">Vehicle No: </label>
                 </div>
                 <div class="col-md-6">
-                    <input type="text" class="form-control" name="vehicle_no" value="{{invoice.vehicle_no}}" required><br>
+                    <input type="text" class="form-control" name="vehicle_no" value="{{invoice.vehicle_no}}"
+                        required><br>
                 </div>
             </div>
 
@@ -119,8 +122,8 @@
                     <label class="form-label" style="font-size: 15px;">Number Of Items to be Billed: </label>
                 </div>
                 <div class="col-md-6">
-                    <input type="number" class="form-control" id="no_of_items" name="no_of_items" value="{{invoice.no_of_items}}"
-                        oninput="generateFields()" required><br>
+                    <input type="number" class="form-control" id="no_of_items" name="no_of_items"
+                        value="{{invoice.no_of_items}}" oninput="generateFields()" required><br>
                 </div>
             </div>
 
@@ -134,7 +137,8 @@
                         <select class="form-control" name="item{{i}}" onchange="checkAddOption(this)" required>
                             <option value="#">--Select--</option>
                             {% for item in items %}
-                            <option value="{{ item.id }}" {% if invoice.invoice_items.all|get_item:i == item %}selected{% endif %}>{{ item.name }}</option>
+                            <option value="{{ item.id }}" {% if invoice.invoice_items.all|get_item:i==item %}selected{%
+                                endif %}>{{ item.name }}</option>
                             {% endfor %}
                             <option value="add_item">Add Item</option>
                         </select>
@@ -146,7 +150,8 @@
                         <label class="form-label" style="font-size: 15px;">Rate: </label>
                     </div>
                     <div class="col-md-6">
-                        <input type="text" class="form-control" name="rate{{i}}" value="{{ invoice.invoice_items.all|get_item_rate:i }}">
+                        <input type="text" class="form-control" name="rate{{i}}"
+                            value="{{ invoice.invoice_items.all|get_item_rate:i }}">
                     </div>
                 </div>
 
@@ -155,7 +160,8 @@
                         <label class="form-label" style="font-size: 15px;">Quantity:</label>
                     </div>
                     <div class="col-md-6">
-                        <input type="number" class="form-control" name="quantity{{i}}" value="{{ invoice.invoice_items.all|get_item_quantity:i }}">
+                        <input type="number" class="form-control" name="quantity{{i}}"
+                            value="{{ invoice.invoice_items.all|get_item_quantity:i }}">
                     </div>
                 </div>
 
@@ -164,7 +170,8 @@
                         <label class="form-label" style="font-size: 15px;">Unit:</label>
                     </div>
                     <div class="col-md-6">
-                        <input type="text" class="form-control" name="unit{{i}}" value="{{ invoice.invoice_items.all|get_item_unit:i }}">
+                        <input type="text" class="form-control" name="unit{{i}}"
+                            value="{{ invoice.invoice_items.all|get_item_unit:i }}">
                     </div>
                 </div>
                 <hr style="height: 2px; background-color: black; border: none;">
@@ -176,7 +183,8 @@
                     <label class="form-label" style="font-size: 15px;">Other Charges: </label>
                 </div>
                 <div class="col-md-6">
-                    <input type="number" class="form-control" name="other_charges" value="{{invoice.other_charges}}"><br>
+                    <input type="number" class="form-control" name="other_charges"
+                        value="{{invoice.other_charges}}"><br>
                 </div>
             </div>
 
@@ -194,7 +202,8 @@
                     <label class="form-label" style="font-size: 15px;">Final Amount: </label>
                 </div>
                 <div class="col-md-6">
-                    <input type="text" class="form-control" name="final_amount" value="{{invoice.final_amount}}" readonly>
+                    <input type="text" class="form-control" name="final_amount" value="{{invoice.final_amount}}"
+                        readonly>
                 </div>
             </div>
 
