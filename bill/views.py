@@ -373,7 +373,7 @@ def invoice_create(request):
             quantity = Decimal(request.POST.get('quantity' + str(i)))
             rate = Decimal(request.POST.get('rate' + str(i)))
             unit = request.POST.get('unit' + str(i))
-            dis = Decimal(request.POST.get('dis' + str(i)))
+            dis = Decimal(0.00)
 
             if profile.state == invoice_to.state:
                 sgst = item_details.tax/Decimal(2)
@@ -826,6 +826,7 @@ def company_statement(request):
         )
     }
     return render(request, 'company_statement.html', context)
+
 
 @login_required(login_url="/login_page/")
 def payment_create(request):
