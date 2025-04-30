@@ -67,7 +67,7 @@
                         <tr>
                             <th class="d-none d-sm-table-cell" scope="row">{{forloop.counter}}</th>
                             <td>{{i.date|date:"d/m/y"}}</td>
-                            <td><a href="{% url 'invoice_print' i.id %}">{{i.invoice_no}}</a></td>
+                            <td><a href="{% url 'invoice_print_original' i.id %}">{{i.invoice_no}}</a></td>
                             <td class="d-none d-sm-table-cell">{{i.sgst_amt}}</td>
                             <td class="d-none d-sm-table-cell">{{i.cgst_amt}}</td>
                             <td class="d-none d-sm-table-cell">{{i.igst_amt}}</td>
@@ -83,7 +83,7 @@
                             <td>{{total_stg}}</td>
                             <td>{{total_s}}</td>
                         </tr>
-                
+
                         <!-- For Mobile -->
                         <tr class="d-sm-none">
                             <th colspan="2">Total Sale: </th>
@@ -130,7 +130,7 @@
                             <td>{{total_ptg}}</td>
                             <td>{{total_p}}</td>
                         </tr>
-                
+
                         <!-- For Mobile -->
                         <tr class="d-sm-none">
                             <th colspan="2">Total Purchase: </th>
@@ -149,7 +149,7 @@
     </div>
     {% endif %}
     <br><br>
-    
+
     <footer class="bg-light text-center text-lg-start mt-auto py-3">
         <div class="container">
             <span class="text-muted">&copy; 2024 InstaBill. All rights reserved.</span>

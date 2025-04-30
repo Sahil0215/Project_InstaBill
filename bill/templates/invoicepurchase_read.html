@@ -17,6 +17,7 @@
             height: 200px;
             object-fit: fill;
         }
+
         body {
             font-family: 'Poppins', sans-serif;
             font-weight: 400;
@@ -55,7 +56,7 @@
         <a href="{% url 'invoicepurchase_create' %}" class="btn btn-primary">Add Invoice</a>
         <a href="{% url 'invoicepurchase_billbook' %}" class="btn btn-secondary">Print Billbook</a>
     </center>
-    
+
 
     <div class="container mt-4">
         <div class="row">
@@ -68,15 +69,21 @@
                             <div>
                                 <h5 class="card-title">Invoice {{ invoice.invoice_no }}</h5>
                                 <p style="font-size: 14px;">{{ invoice.invoice_to.name }}</p>
+                                <p style="font-size: 12px;">
+                                    {%for item in invoice.invoice_items.all%}
+                                    {{item.item_details.name}} : {{item.quantity}},
+                                    {%endfor %}</p>
                             </div>
                             <div class="text-end">
                                 <p class="mb-1"><strong>Date:</strong> {{ invoice.date }}</p>
+
                             </div>
                         </div>
                     </div>
                     <div class="card-footer d-flex justify-content-between">
                         <a href="{% url 'invoicepurchase_update' invoice.id %}" class="btn btn-warning">Edit</a>
-                        <a href="{% url 'invoicepurchase_delete' invoice.id %}" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this invoice?');">Delete</a>
+                        <a href="{% url 'invoicepurchase_delete' invoice.id %}" class="btn btn-danger"
+                            onclick="return confirm('Are you sure you want to delete this invoice?');">Delete</a>
                     </div>
                 </div>
             </div>
@@ -91,7 +98,7 @@
     </div>
     {% endif %}
     <br><br>
-    
+
     <footer class="bg-light text-center text-lg-start mt-auto py-3">
         <div class="container">
             <span class="text-muted">&copy; 2024 InstaBill. All rights reserved.</span>

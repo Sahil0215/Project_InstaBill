@@ -627,6 +627,7 @@ def invoicepurchase_create(request):
         invoice_to_id = request.POST.get('invoice_to')
         invoice_to = Customer.objects.get(id=invoice_to_id)
         date = request.POST.get('date')
+        invoice_no = request.POST.get('invoice_no')
         no_of_items = int(request.POST.get('no_of_items'))
         other_charges = Decimal(request.POST.get('other_charges'))
         discount = Decimal(request.POST.get('discount'))
@@ -709,6 +710,7 @@ def invoicepurchase_create(request):
             user=request.user,
             invoice_to=invoice_to,
             date=date_obj,
+            invoice_no=invoice_no,
             no_of_items=no_of_items,
             taxable_before=taxable_before,
             other_charges=other_charges,

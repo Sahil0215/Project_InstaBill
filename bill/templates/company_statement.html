@@ -148,7 +148,7 @@
                         <tr>
                             <th class="d-none d-sm-table-cell" scope="row">{{forloop.counter}}</th>
                             <td>{{i.date|date:"d/m/y"}}</td>
-                            <td>{{i.invoice_no}}</td>
+                            <td>{{i.invoice_no}}</a></td>
                             <td class="d-none d-sm-table-cell">{{i.sgst_amt}}</td>
                             <td class="d-none d-sm-table-cell">{{i.cgst_amt}}</td>
                             <td class="d-none d-sm-table-cell">{{i.igst_amt}}</td>
@@ -168,7 +168,7 @@
                         <!-- For Mobile -->
                         <tr class="d-sm-none">
                             <th colspan="2">Total Purchase: </th>
-                            <td>{{total_s}}</td>
+                            <td>{{total_p}}</td>
                         </tr>
                     </tbody>
                 </table>

@@ -125,6 +125,7 @@ class InvoicePurchase(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     invoice_to = models.ForeignKey(
         Customer, on_delete=models.CASCADE, blank=True, null=True, related_name='billtopurchase')
+    invoice_no = models.PositiveIntegerField(default=0)
     date = models.DateField(blank=True, null=True)
     no_of_items = models.PositiveIntegerField(default=0)
     invoice_items = models.ManyToManyField(BilledItem)
