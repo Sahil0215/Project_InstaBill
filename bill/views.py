@@ -471,7 +471,7 @@ def invoice_create(request):
 
         return redirect("invoice_read")
     else:
-        customer = Customer.objects.filter(user=request.user)
+        customer = Customer.objects.filter(user=request.user).order_by("name")
         item = Item.objects.filter(user=request.user)
         profile = Profile.objects.get(user=request.user)
         return render(request, 'invoice_create.html', {'customer': customer, 'items': item, 'profile': profile})
