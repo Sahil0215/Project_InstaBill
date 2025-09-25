@@ -87,7 +87,7 @@ class Invoice(models.Model):
     invoice_no = models.PositiveIntegerField(default=0)
     date = models.DateField(blank=True, null=True)
     eway = models.CharField(max_length=25)
-    transport = models.CharField(max_length=20)
+    transport = models.CharField(max_length=100)
     vehicle_no = models.CharField(max_length=15)
     no_of_items = models.PositiveIntegerField(default=0)
     invoice_items = models.ManyToManyField(BilledItem)
