@@ -830,6 +830,287 @@ def company_statement(request):
     return render(request, 'company_statement.html', context)
 
 
+import pandas as pd
+import io
+import openpyxl
+
+# @login_required(login_url="/login_page/")
+# def invoice_excel_report(request):
+#     if request.method == 'POST':
+#         # Get date filters from form
+#         start_date_str = request.POST.get('start_date')
+#         end_date_str = request.POST.get('end_date')
+        
+#         # Convert string dates to date objects
+#         try:
+#             start_date = datetime.strptime(start_date_str, '%Y-%m-%d').date() if start_date_str else None
+#             end_date = datetime.strptime(end_date_str, '%Y-%m-%d').date() if end_date_str else None
+#         except ValueError:
+#             return render(request, 'invoice_report.html', {
+#                 'error': 'Invalid date format. Please use YYYY-MM-DD.'
+#             })
+        
+#         # Build queryset with filters
+#         invoices = Invoice.objects.filter(user=request.user)
+        
+#         if start_date:
+#             invoices = invoices.filter(date__gte=start_date)
+#         if end_date:
+#             invoices = invoices.filter(date__lte=end_date)
+        
+#         # Order by date and invoice number
+#         invoices = invoices.order_by('date', 'invoice_no')
+        
+#         if not invoices.exists():
+#             return render(request, 'invoice_report.html', {
+#                 'error': 'No invoices found for the selected date range.'
+#             })
+        
+#         # Prepare data for Excel
+#         data = []
+#         for invoice in invoices:
+#             # Get all billed items for this invoice
+#             billed_items = invoice.invoice_items.all()
+            
+#             # Create a row for each billed item
+#             for item in billed_items:
+#                 data.append({
+#                     'Invoice No': invoice.invoice_no,
+#                     'Date': invoice.date.strftime('%d-%m-%Y') if invoice.date else '',
+#                     'Customer Name': invoice.invoice_to.name if invoice.invoice_to else '',
+#                     'Customer GST': invoice.invoice_to.gst if invoice.invoice_to else '',
+#                     'Item Name': item.item_details.name if item.item_details else '',
+#                     'HSN Code': item.item_details.hsn if item.item_details else '',
+#                     'Rate': float(item.rate),
+#                     'Quantity': float(item.quantity),
+#                     'Unit': item.unit or '',
+#                     'Discount': float(item.dis) if item.dis else 0.0,
+#                     'Taxable Value': float(item.taxval) if item.taxval else 0.0,
+#                     'IGST Rate %': float(item.igst),
+#                     'SGST Rate %': float(item.sgst),
+#                     'CGST Rate %': float(item.cgst),
+#                     'IGST Amount': float(item.igst_amt),
+#                     'SGST Amount': float(item.sgst_amt),
+#                     'CGST Amount': float(item.cgst_amt),
+#                     'Amount': float(item.amount),
+#                     'Transport': invoice.transport,
+#                     'Vehicle No': invoice.vehicle_no,
+#                     'E-Way Bill': invoice.eway,
+#                     'Total Taxable Before': float(invoice.taxable_before),
+#                     'Other Charges': float(invoice.other_charges),
+#                     'Total Discount': float(invoice.discount),
+#                     'Total Taxable After': float(invoice.taxable_after),
+#                     'Total IGST': float(invoice.igst_amt),
+#                     'Total SGST': float(invoice.sgst_amt),
+#                     'Total CGST': float(invoice.cgst_amt),
+#                     'Total GST': float(invoice.tgst_amt),
+#                     'Grand Total': float(invoice.grand_total),
+#                     'Grand Total in Words': invoice.grand_total_words or ''
+#                 })
+        
+#         # Create DataFrame
+#         df = pd.DataFrame(data)
+        
+#         # Create Excel file in memory
+#         output = io.BytesIO()
+        
+#         with pd.ExcelWriter(output, engine='openpyxl') as writer:
+#             df.to_excel(writer, sheet_name='Invoice Report', index=False)
+            
+#             # Get the workbook and worksheet
+#             workbook = writer.book
+#             worksheet = writer.sheets['Invoice Report']
+            
+#             # Auto-adjust column widths
+#             for column in worksheet.columns:
+#                 max_length = 0
+#                 column_letter = column[0].column_letter
+#                 for cell in column:
+#                     try:
+#                         if len(str(cell.value)) > max_length:
+#                             max_length = len(str(cell.value))
+#                     except:
+#                         pass
+#                 adjusted_width = (max_length + 2)
+#                 worksheet.column_dimensions[column_letter].width = adjusted_width
+        
+#         # Prepare HTTP response
+#         output.seek(0)
+#         response = HttpResponse(
+#             output.getvalue(),
+#             content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+#         )
+        
+#         # Create filename with date range
+#         filename = f"Invoice_Report"
+#         if start_date:
+#             filename += f"_{start_date.strftime('%d-%m-%Y')}"
+#         if end_date:
+#             filename += f"_to_{end_date.strftime('%d-%m-%Y')}"
+#         filename += ".xlsx"
+        
+#         response['Content-Disposition'] = f'attachment; filename="{filename}"'
+        
+#         return response
+    
+#     # GET request - show the filter form
+#     return render(request, 'generate_excel.html')
+
+from openpyxl.styles import PatternFill
+@login_required(login_url="/login_page/")
+def invoice_excel_report(request):
+    if request.method == 'POST':
+        # Get date filters from form
+        start_date_str = request.POST.get('start_date')
+        end_date_str = request.POST.get('end_date')
+        
+        # Convert string dates to date objects
+        try:
+            start_date = datetime.strptime(start_date_str, '%Y-%m-%d').date() if start_date_str else None
+            end_date = datetime.strptime(end_date_str, '%Y-%m-%d').date() if end_date_str else None
+        except ValueError:
+            return render(request, 'invoice_report.html', {
+                'error': 'Invalid date format. Please use YYYY-MM-DD.'
+            })
+        
+        # Build queryset with filters
+        invoices = Invoice.objects.filter(user=request.user)
+        
+        if start_date:
+            invoices = invoices.filter(date__gte=start_date)
+        if end_date:
+            invoices = invoices.filter(date__lte=end_date)
+        
+        # Order by date and invoice number
+        invoices = invoices.order_by('date', 'invoice_no')
+        
+        if not invoices.exists():
+            return render(request, 'invoice_report.html', {
+                'error': 'No invoices found for the selected date range.'
+            })
+        
+        # Prepare data for Excel
+        data = []
+        invoice_ranges = {}  # To track row ranges for each invoice
+        
+        current_row = 2  # Start from row 2 (after header)
+        
+        for invoice in invoices:
+            billed_items = invoice.invoice_items.all()
+            start_row = current_row
+            
+            for index, item in enumerate(billed_items):
+                row_data = {
+                    'Invoice No': invoice.invoice_no,
+                    'Date': invoice.date.strftime('%d-%m-%Y') if invoice.date else '',
+                    'Customer Name': invoice.invoice_to.name if invoice.invoice_to else '',
+                    'Customer GST': invoice.invoice_to.gst if invoice.invoice_to else '',
+                    'Item Name': item.item_details.name if item.item_details else '',
+                    'HSN Code': item.item_details.hsn if item.item_details else '',
+                    'Rate': float(item.rate),
+                    'Quantity': float(item.quantity),
+                    'Unit': item.unit or '',
+                    'Discount': float(item.dis) if item.dis else 0.0,
+                    'Taxable Value': float(item.taxval) if item.taxval else 0.0,
+                    'IGST Rate %': float(item.igst),
+                    'SGST Rate %': float(item.sgst),
+                    'CGST Rate %': float(item.cgst),
+                    'IGST Amount': float(item.igst_amt),
+                    'SGST Amount': float(item.sgst_amt),
+                    'CGST Amount': float(item.cgst_amt),
+                    'Amount': float(item.amount),
+                    'Transport': invoice.transport,
+                    'Vehicle No': invoice.vehicle_no,
+                    'E-Way Bill': invoice.eway,
+                    'Total Taxable Before': float(invoice.taxable_before),
+                    'Other Charges': float(invoice.other_charges),
+                    'Total Discount': float(invoice.discount),
+                    'Total Taxable After': float(invoice.taxable_after),
+                    'Total IGST': float(invoice.igst_amt),
+                    'Total SGST': float(invoice.sgst_amt),
+                    'Total CGST': float(invoice.cgst_amt),
+                    'Total GST': float(invoice.tgst_amt),
+                    'Grand Total': float(invoice.grand_total),
+                    'Grand Total in Words': invoice.grand_total_words or ''
+                }
+                data.append(row_data)
+                current_row += 1
+            
+            end_row = current_row - 1
+            invoice_ranges[invoice.invoice_no] = (start_row, end_row)
+            
+            # Add empty row after each invoice for better readability
+            if billed_items.exists():
+                data.append({})
+                current_row += 1
+        
+        # Create DataFrame
+        df = pd.DataFrame(data)
+        
+        # Create Excel file in memory
+        output = io.BytesIO()
+        
+        with pd.ExcelWriter(output, engine='openpyxl') as writer:
+            df.to_excel(writer, sheet_name='Invoice Report', index=False)
+            
+            # Get the workbook and worksheet
+            workbook = writer.book
+            worksheet = writer.sheets['Invoice Report']
+            
+            # Merge cells for each invoice
+            gray_fill = PatternFill(start_color="F0F0F0", end_color="F0F0F0", fill_type="solid")
+            
+            for invoice_no, (start_row, end_row) in invoice_ranges.items():
+                if start_row < end_row:  # Only merge if multiple rows
+                    # Merge columns A to D (Invoice No, Date, Customer Name, Customer GST)
+                    for col in ['A', 'B', 'C', 'D']:
+                        worksheet.merge_cells(f'{col}{start_row}:{col}{end_row}')
+                        # Apply gray background to merged cells
+                        for row in range(start_row, end_row + 1):
+                            worksheet[f'{col}{row}'].fill = gray_fill
+                    
+                    # Merge invoice-level columns (S to AC)
+                    for col in ['S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'AA', 'AB', 'AC']:
+                        worksheet.merge_cells(f'{col}{start_row}:{col}{end_row}')
+                        # Apply gray background to merged cells
+                        for row in range(start_row, end_row + 1):
+                            worksheet[f'{col}{row}'].fill = gray_fill
+            
+            # Auto-adjust column widths
+            for column in worksheet.columns:
+                max_length = 0
+                column_letter = column[0].column_letter
+                for cell in column:
+                    try:
+                        if len(str(cell.value)) > max_length:
+                            max_length = len(str(cell.value))
+                    except:
+                        pass
+                adjusted_width = (max_length + 2)
+                worksheet.column_dimensions[column_letter].width = adjusted_width
+        
+        # Prepare HTTP response
+        output.seek(0)
+        response = HttpResponse(
+            output.getvalue(),
+            content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+        )
+        
+        # Create filename with date range
+        filename = f"Invoice_Report"
+        if start_date:
+            filename += f"_{start_date.strftime('%d-%m-%Y')}"
+        if end_date:
+            filename += f"_to_{end_date.strftime('%d-%m-%Y')}"
+        filename += ".xlsx"
+        
+        response['Content-Disposition'] = f'attachment; filename="{filename}"'
+        
+        return response
+    
+    # GET request - show the filter form
+    return render(request, 'generate_excel.html')
+
 @login_required(login_url="/login_page/")
 def payment_create(request):
     if request.method == 'POST':

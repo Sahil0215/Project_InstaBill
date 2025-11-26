@@ -25,6 +25,7 @@ urlpatterns = [
     path('customer_delete/<int:pk>/', customer_delete, name='customer_delete'),
 
     path('company_statement/', company_statement, name='company_statement'),
+     path('invoice-excel-report/', invoice_excel_report, name='invoice_excel_report'),
 
     path('item_create/', item_create, name='item_create'),
     path('item_read/', item_read, name='item_read'),
