@@ -1070,7 +1070,7 @@ def invoice_excel_report(request):
                             worksheet[f'{col}{row}'].fill = gray_fill
                     
                     # Merge invoice-level columns (S to AC)
-                    for col in ['S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'AA', 'AB', 'AC']:
+                    for col in ['S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'AA', 'AB', 'AC','AD','AE']:
                         worksheet.merge_cells(f'{col}{start_row}:{col}{end_row}')
                         # Apply gray background to merged cells
                         for row in range(start_row, end_row + 1):
