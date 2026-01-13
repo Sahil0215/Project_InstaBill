@@ -537,7 +537,7 @@ def invoice_print_duplicate(request, pk):
 def invoice_print_triplicate(request, pk):
     profile = Profile.objects.get(user=request.user)
     invoice = Invoice.objects.get(id=pk)
-    bill_of = "Triplicate for Transporter"
+    bill_of = "Triplicate for Assessee"
     x = range(1, 17)
     return render(request, 'invoice_print.html', {'invoice': invoice, 'profile': profile, 'x': x, 'bill_of': bill_of})
 
